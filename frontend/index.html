@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieLens | Movie Discovery & Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="#" onclick="showPage('recommendations')">
+            <span class="brand-icon">M</span>
+            <span>MovieLens</span>
+        </a>
+
+        <nav>
+            <button class="nav-link active" id="recommendationsNav"
+                    onclick="showPage('recommendations')">Discover Movies</button>
+            <button class="nav-link" id="analyticsNav"
+                    onclick="showPage('analytics')">Analytics</button>
+        </nav>
+
+        <span class="dataset-tag">MOVIELENS 100K</span>
+    </header>
+
+    <main>
+        <!-- RECOMMENDATIONS PAGE -->
+        <section id="recommendationsPage" class="page active">
+            <div class="hero">
+                <div class="hero-content">
+                    <span class="eyebrow">YOUR MOVIE DISCOVERY PLATFORM</span>
+                    <h1>Find your next<br><span>favourite movie.</span></h1>
+                    <p>Explore movies using ratings, popularity and genres,
+                       powered by Big Data analytics.</p>
+                </div>
+                <div class="hero-decoration">▶</div>
+            </div>
+
+            <section class="filter-panel">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">EXPLORE THE COLLECTION</span>
+                        <h2>Discover Movies</h2>
+                    </div>
+                    <span class="muted">Choose your preferences</span>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group genre-filter">
+                        <label>GENRES</label>
+                        <div id="genreOptions" class="genre-options">
+                            <span class="muted">Loading genres...</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="minRating">MINIMUM RATING</label>
+                            <select id="minRating">
+                                <option value="0">Any rating</option>
+                                <option value="2">2.0+</option>
+                                <option value="2.5">2.5+</option>
+                                <option value="3">3.0+</option>
+                                <option value="3.5" selected>3.5+</option>
+                                <option value="4">4.0+</option>
+                                <option value="4.5">4.5+</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="sortBy">SORT BY</label>
+                            <select id="sortBy">
+                                <option value="rating">Highest rated</option>
+                                <option value="popularity">Most popular</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="resultLimit">RESULTS</label>
+                            <select id="resultLimit">
+                                <option value="10">10 movies</option>
+                                <option value="20" selected>20 movies</option>
+                                <option value="50">50 movies</option>
+                                <option value="100">100 movies</option>
+                            </select>
+                        </div>
+
+                        <button class="primary-button" onclick="loadRecommendations()">
+                            Find Movies →
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">CURATED FOR DISCOVERY</span>
+                        <h2>Recommended Movies</h2>
+                    </div>
+                    <span id="resultCount" class="muted">Loading...</span>
+                </div>
+                <div id="movieGrid" class="movie-grid">
+                    <p class="muted">Loading movies...</p>
+                </div>
+            </section>
+        </section>
+
+        <!-- ANALYTICS PAGE -->
+        <section id="analyticsPage" class="page">
+            <div class="dashboard-heading">
+                <span class="eyebrow">DATA-DRIVEN INSIGHTS</span>
+                <h1>MovieLens Analytics</h1>
+                <p>Explore patterns and insights discovered from the MovieLens dataset.</p>
+            </div>
+
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <span>TOTAL MOVIES</span>
+                    <strong id="totalMovies">—</strong>
+                    <small>Movies in the dataset</small>
+                </div>
+                <div class="kpi-card">
+                    <span>TOTAL RATINGS</span>
+                    <strong id="totalRatings">—</strong>
+                    <small>User-submitted ratings</small>
+                </div>
+                <div class="kpi-card">
+                    <span>TOTAL USERS</span>
+                    <strong id="totalUsers">—</strong>
+                    <small>Unique users</small>
+                </div>
+                <div class="kpi-card">
+                    <span>GENRES</span>
+                    <strong id="totalGenres">—</strong>
+                    <small>Movie categories</small>
+                </div>
+            </section>
+
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-heading">
+                        <h3>Rating Distribution</h3>
+                        <span>Number of ratings by score</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-heading">
+                        <h3>Average Rating by Genre</h3>
+                        <span>Genre-wise audience ratings</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="genreChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-heading">
+                        <h3>User Demographics</h3>
+                        <span>Distribution by gender</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="demographicsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-heading">
+                        <h3>Users by Occupation</h3>
+                        <span>Occupation-wise distribution</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="occupationChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tables-grid">
+                <div class="table-card">
+                    <div class="chart-heading">
+                        <h3>Top Rated Movies</h3>
+                        <span>Minimum 50 ratings</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr><th>Movie</th><th>Ratings</th><th>Average</th></tr>
+                            </thead>
+                            <tbody id="topRatedTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="chart-heading">
+                        <h3>Most Popular Movies</h3>
+                        <span>Based on rating count</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr><th>Movie</th><th>Ratings</th><th>Average</th></tr>
+                            </thead>
+                            <tbody id="mostRatedTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="chart-heading">
+                        <h3>Most Active Users</h3>
+                        <span>Users who rated the most movies</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr><th>User ID</th><th>Ratings given</th><th>Average</th></tr>
+                            </thead>
+                            <tbody id="activeUsersTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <span>MovieLens — Big Data Movie Recommendation & Analytics System</span>
+        <span>Powered by Hadoop · MapReduce · Hive · Flask</span>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
